@@ -19,16 +19,16 @@ class Model_NewsCategory extends ORM{
 
     protected $_uriToMe;
 
-    public static $parts = array(
-//        0=>'Основная лента',
-        1=>'Новости',
-        2=>'Статьи',
-    );
+    public static $parts = array();
 
-    public static $parts_uri = array(
-        'news'=>1,
-        'articles'=>2,
-    );
+    public static $parts_uri = array();
+
+    public function __construct($id = NULL)
+    {
+        self::$parts = Kohana::$config->load('news')->parts;
+        self::$parts_uri = Kohana::$config->load('news')->parts_uri;
+        parent::__construct($id);
+    }
 
     public function rules(){
         return array(

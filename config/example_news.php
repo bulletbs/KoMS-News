@@ -1,12 +1,8 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 return array(
     'parts' => array(
-        1=>'Якиев',
+        1=>'Новости',
         2=>'Статьи',
-    ),
-    'parts_uri' => array(
-        'news'=>1,
-        'articles'=>2,
     ),
     'main_list' => array(
         'c4' => array(

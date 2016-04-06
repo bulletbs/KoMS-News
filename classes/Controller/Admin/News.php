@@ -22,7 +22,7 @@ class Controller_Admin_News extends Controller_Admin_Crud
         'smartDate',
     );
 
-    protected $_sort_fields = array(
+    protected $_filter_fields = array(
         'category_id' => array(
             'label' => 'Показать категорию',
             'type' => 'select',
@@ -88,15 +88,15 @@ class Controller_Admin_News extends Controller_Admin_Crud
 
     public function action_index(){
         /* Filter Parent_id initialize  */
-        $this->_sort_fields['category_id']['data']['options'][0] = 'Все категории';
-        $this->_sort_fields['category_id']['data']['options'] = array_merge($this->_sort_fields['category_id']['data']['options'], ORM::factory('NewsCategory')->getOptionList());
+        $this->_filter_fields['category_id']['data']['options'][0] = 'Все категории';
+        $this->_filter_fields['category_id']['data']['options'] = array_merge($this->_filter_fields['category_id']['data']['options'], ORM::factory('NewsCategory')->getOptionList());
 
-        if(!isset($this->_sort_values['category_id']))
-            $this->_sort_values['category_id'] = 0;
-        $this->_sort_fields['category_id']['data']['selected'] = $this->_sort_values['category_id'];
-        $this->_sort_fields['name']['data'] = $this->_sort_values['name'];
-        $this->_sort_fields['content']['data'] = $this->_sort_values['content'];
-        $this->_sort_fields['id']['data'] = $this->_sort_values['id'];
+        if(!isset($this->_filter_values['category_id']))
+            $this->_filter_values['category_id'] = 0;
+        $this->_filter_fields['category_id']['data']['selected'] = $this->_filter_values['category_id'];
+        $this->_filter_fields['name']['data'] = $this->_filter_values['name'];
+        $this->_filter_fields['content']['data'] = $this->_filter_values['content'];
+        $this->_filter_fields['id']['data'] = $this->_filter_values['id'];
 
         parent::action_index();
     }
