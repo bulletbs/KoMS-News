@@ -22,7 +22,7 @@ class Task_NewsYakievImport extends Minion_Task
      * Generate sitemaps
      */
     protected function _execute(Array $params){
-        Kohana::$environment = $_SERVER['XDG_CURRENT_DESKTOP'] == 'GNOME' ? Kohana::DEVELOPMENT : Kohana::PRODUCTION;
+        Kohana::$environment = isset($_SERVER['XDG_CURRENT_DESKTOP']) == 'GNOME' ? Kohana::DEVELOPMENT : Kohana::PRODUCTION;
         $start = time();
         $amount = 0;
         $imported = 0;
