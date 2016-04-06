@@ -182,12 +182,4 @@ class Controller_Admin_News extends Controller_Admin_Crud
 
         return $model;
     }
-
-    public function action_import(){
-        $news = ORM::factory('News')->where('date','>', time() - 86400*7)->find_all();
-        foreach($news as $new){
-            $new->brief = preg_replace("/<\/?span[^>]*\>/i", "", $new->brief);
-            $new->save();
-        }
-    }
 }

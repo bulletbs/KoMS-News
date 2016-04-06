@@ -48,7 +48,7 @@ class Controller_News extends Controller_System_Page
         ));
 
         /* Meta tags */
-        $this->title = htmlspecialchars("Все статьи" .' - '.$this->config->view['title']);
+        $this->title = htmlspecialchars("Все статьи" .' - '.$this->config['view']['title']);
 
         /* Top slider */
         $slider =  Model_News::newsOrmFinder()->and_where('main','=','1')->limit(5)->find_all()->as_array('id');
@@ -93,7 +93,7 @@ class Controller_News extends Controller_System_Page
 
 
             /* Meta tags */
-            $this->title = htmlspecialchars( Model_NewsCategory::$parts[$id] .' - '.$this->config->view['title']);
+            $this->title = htmlspecialchars( Model_NewsCategory::$parts[$id] .' - '.$this->config['view']['title']);
 
             /* Top slider */
             $slider =  Model_News::newsOrmFinder()->and_where('category_id','IN',array_keys($categories))->and_where('main','=','1')->limit(5)->find_all()->as_array('id');
@@ -134,7 +134,7 @@ class Controller_News extends Controller_System_Page
             $this->breadcrumbs->add(Model_NewsCategory::$parts[$category->part_id], Model_NewsCategory::getPartUri($category->part_id));
 
             /* Meta tags */
-            $this->title = htmlspecialchars( $category->name .' - '.$this->config->view['title']);
+            $this->title = htmlspecialchars( $category->name .' - '.$this->config['view']['title']);
 
             /* Init Pagination module */
             $count = ORM::factory('News')->where('category_id','=', $id)->and_where('enable','=','1')->count_all();
@@ -197,7 +197,7 @@ class Controller_News extends Controller_System_Page
             /* Meta tags */
             $this->title = trim(htmlspecialchars( !empty($article->title) ? $article->title : $article->name));
             $this->description = trim( !empty($article->description) ? $article->description : strip_tags($article->brief));
-            $this->keywords = !empty($article->keywords) ? $article->keywords : $this->config->view['keywords'];
+            $this->keywords = !empty($article->keywords) ? $article->keywords : $this->config['view']['keywords'];
 
             /* Photos */
             $photos = ORM::factory('NewsPhoto')->where('news_id', '=', $article->id)->find_all()->as_array('id');
