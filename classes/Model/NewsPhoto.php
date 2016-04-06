@@ -48,7 +48,6 @@ class Model_NewsPhoto extends ORM{
         $image->image_set_max_edges(800);
         $this->width = $image->width;
         $this->height = $image->height;
-        echo $this->getPhoto(true);
         $image->save($this->getPhoto(true));
     }
 
