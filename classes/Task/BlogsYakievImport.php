@@ -51,13 +51,15 @@ class Task_BlogsYakievImport extends Minion_Task
         /**
          * Importing
          */
-        for($i=0; $i*self::ONE_STEP_AMOUNT < self::ALL_AMOUNT; $i++){
-            if($last_row_id)
-                $pos = $last_row_id;
-            else{
-                $pos = DB::select(DB::expr('max(id) max'))->from('news')->execute();
-                $pos = $pos[0]['max'] ? $pos[0]['max'] : 0;
-            }
+        $i = 0;
+        $pos = 0;
+//        for($i=0; $i*self::ONE_STEP_AMOUNT < self::ALL_AMOUNT; $i++){
+//            if($last_row_id)
+//                $pos = $last_row_id;
+//            else{
+//                $pos = DB::select(DB::expr('max(id) max'))->from('news')->execute();
+//                $pos = $pos[0]['max'] ? $pos[0]['max'] : 0;
+//            }
 
             $sql = DB::select()
                 ->from('blogs')
@@ -108,7 +110,7 @@ class Task_BlogsYakievImport extends Minion_Task
                 $last_row_id = $row['record_id'];
             }
             unset($result);
-        }
+//        }
 
         print 'Operation taken '. (time() - $start) .' seconds for '. $imported . ' (of '. $amount .') records'.PHP_EOL;
     }
