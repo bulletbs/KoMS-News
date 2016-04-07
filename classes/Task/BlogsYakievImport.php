@@ -46,8 +46,6 @@ class Task_BlogsYakievImport extends Minion_Task
                 $cat2cat[ $source_categories[ $res['name'] ] ] = $res['id'];
         }
 
-
-
         /**
          * Importing
          */
@@ -72,8 +70,10 @@ class Task_BlogsYakievImport extends Minion_Task
             foreach($result as $row){
                 try{
                     /* Category & Part */
-                    if(!isset( $cat2cat[$row['section']] ))
+                    if(!isset( $cat2cat[$row['section']] )){
+                        print "Missed category ". $row['section'] . PHP_EOL;
                         continue;
+                    }
                     $row['category_id'] = $cat2cat[$row['section']];
 
                     $model = ORM::factory('News')->values(array(
