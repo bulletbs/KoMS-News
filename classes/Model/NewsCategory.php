@@ -8,7 +8,7 @@
 
 class Model_NewsCategory extends ORM{
 
-    const CATEGORY_CACHE_TIME = 86400;
+    const CATEGORY_CACHE_TIME = 2592000;
     const CATEGORY_OPTIONS_CACHE = 'category_options_cache';
     const CATEGORY_TREE_CACHE = 'category_tree_cache';
     const CATEGORY_LIST_CACHE = 'category_list_cache';
@@ -19,14 +19,13 @@ class Model_NewsCategory extends ORM{
 
     protected $_uriToMe;
 
-    public static $parts = array();
+    public static $parts;
+    public static $parts_uri;
 
-    public static $parts_uri = array();
+    public static $fields;
 
     public function __construct($id = NULL)
     {
-        self::$parts = Kohana::$config->load('news')->parts;
-        self::$parts_uri = Kohana::$config->load('news')->parts_uri;
         parent::__construct($id);
     }
 
@@ -100,8 +99,9 @@ class Model_NewsCategory extends ORM{
      * @return int|null
      */
     public static function getPartIdByAlias($alias){
-        if(isset(self::$parts_uri[$alias]))
-            return self::$parts_uri[$alias];
+        $uris = self::partsUri();
+        if(isset($uris[$alias]))
+            return $uris[$alias];
         return NULL;
     }
 
@@ -171,7 +171,7 @@ class Model_NewsCategory extends ORM{
      * @return string
      */
     public static function getPartUri($id){
-        $parts_uris = array_flip(Model_NewsCategory::$parts_uri);
+        $parts_uris = array_flip(Model_NewsCategory::partsUri());
         return Route::get('news_part')->uri(array(
             'part_alias' => $parts_uris[$id],
         ));
@@ -183,7 +183,7 @@ class Model_NewsCategory extends ORM{
      */
     public function getUri(){
         if(is_null($this->_uriToMe)){
-            $parts_uris = array_flip(Model_NewsCategory::$parts_uri);
+            $parts_uris = array_flip(self::partsUri());
             $this->_uriToMe = Route::get('news_cat')->uri(array(
                 'part_alias' => $parts_uris[$this->part_id],
                 'cat_alias' => $this->alias,
@@ -193,34 +193,12 @@ class Model_NewsCategory extends ORM{
     }
 
     /**
-     * Creating menu two-dimensional array
-     * part_id  =>  item1
-     *              item2
-     *               ...
-     * @return array
-     */
-    public static function createMenuArray(){
-//        Cache::instance()->delete(Model_NewsCategory::CATEGORY_MENUARRAY_CACHE);
-        if(!$menu = Cache::instance()->get(Model_NewsCategory::CATEGORY_MENUARRAY_CACHE)){
-            $menu = array();
-            $categories = self::getCategoriesList();
-            foreach(Model_NewsCategory::getCategoriesByPart(1) as $category)
-                $menu [0][$category->id * 10] = array($category->name, $category->getUri());
-            $menu [0][2] = array(Model_NewsCategory::$parts[2], Model_NewsCategory::getPartUri(2));
-            foreach(Model_NewsCategory::getCategoriesByPart(2) as $category)
-                $menu [$category->part_id][$category->id] = array($category->name, $category->getUri());
-            Cache::instance()->set(Model_NewsCategory::CATEGORY_MENUARRAY_CACHE, $menu, Model_NewsCategory::CATEGORY_CACHE_TIME);
-        }
-        return $menu;
-    }
-
-    /**
      * Request module parts links array for sitemap generation
      * @return array
      */
     public function sitemapParts(){
         $links = array();
-        $parts_uris = array_flip(Model_NewsCategory::$parts_uri);
+        $parts_uris = array_flip(self::partsUri());
         foreach(self::$parts as $key=>$val){
             $links[] = Model_NewsCategory::getPartUri($key);
             $count = Model_News::newsOrmFinder()->and_where('category_id', 'IN', Model_NewsCategory::getCategoriesIdsByPart($key))->count_all();
@@ -241,7 +219,7 @@ class Model_NewsCategory extends ORM{
      */
     public function sitemapCategories(){
         $links = array();
-        $parts_uris = array_flip(Model_NewsCategory::$parts_uri);
+        $parts_uris = array_flip(self::partsUri());
         foreach($this->getCategoriesList() as $key=>$model){
             $links[] = $model->getUri();
             $count = Model_News::newsOrmFinder()->and_where('category_id', '=', $model->id)->count_all();
@@ -255,5 +233,62 @@ class Model_NewsCategory extends ORM{
                 ));
         }
         return $links;
+    }
+
+    /**
+     * Returns parts alias
+     * @param $id
+     * @return null
+     */
+    public static function getPartAlias($id){
+        $uris = array_flip(self::partsUri());
+        if(isset($uris[$id]))
+            return $uris[$id];
+        return NULL;
+    }
+
+    /**
+     * Returns parts array or one part if ID included
+     * @param null $id
+     * @return null
+     * @throws Kohana_Exception
+     */
+    public static function parts($id = NULL){
+        if(is_null(self::$parts))
+            self::$parts = Kohana::$config->load('news')->parts;
+        if(!is_null($id))
+            return isset(self::$parts[$id]) ? self::$parts[$id] : NULL;
+        return self::$parts;
+    }
+
+    /**
+     * Returns parts uris array or one part if ID included
+     * @return mixed
+     * @throws Kohana_Exception
+     */
+    public static function partsUri($id = NULL){
+        if(is_null(self::$parts_uri))
+            self::$parts_uri = Kohana::$config->load('news')->parts_uri;
+        if(!is_null($id))
+            return isset(self::$parts_uri[$id]) ? self::$parts_uri : NULL;
+        return self::$parts_uri;
+
+    }
+
+    /**
+     * Creates cached array width ID as key and Field value as value
+     * @param $field
+     * @param $id
+     * @return array|mixed
+     */
+    public static function getField($field, $id = null){
+        if(is_null(self::$fields) && NULL === $array = Cache::instance()->get('NewsCategoryFieldArray'.ucfirst($field))){
+            $array = ORM::factory('NewsCategory')->find_all()->as_array('id', $field);
+            Cache::instance()->set('NewsCategoryFieldArray'.ucfirst($field), $array, self::CATEGORY_CACHE_TIME);
+            self::$fields[$field] = $array;
+        }
+        if(!is_null($id))
+            return isset(self::$fields[$field][$id]) ? self::$fields[$field][$id] : false;
+        return  self::$fields;
     }
 }

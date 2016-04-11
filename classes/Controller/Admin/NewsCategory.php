@@ -32,7 +32,7 @@ class Controller_Admin_NewsCategory extends Controller_Admin_Crud
      * @return array|bool|void
      */
     protected function _processForm($model, $data = array()){
-        $this->_form_fields['part_id']['data']['options'] = $model::$parts;
+        $this->_form_fields['part_id']['data']['options'] = $model::getParts();
         $this->_form_fields['part_id']['data']['selected'] = $model->part_id;
 
         parent::_processForm($model);

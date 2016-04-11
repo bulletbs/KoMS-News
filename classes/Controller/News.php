@@ -131,7 +131,7 @@ class Controller_News extends Controller_System_Page
             $this->scripts[] = 'media/libs/bxSlider/jquery.bxslider.min.js';
             $this->scripts[] = 'media/js/slider.js';
 
-            $this->breadcrumbs->add(Model_NewsCategory::$parts[$category->part_id], Model_NewsCategory::getPartUri($category->part_id));
+            $this->breadcrumbs->add(Model_NewsCategory::parts($category->part_id), Model_NewsCategory::getPartUri($category->part_id));
 
             /* Meta tags */
             $this->title = htmlspecialchars( $category->name .' - '.$this->config['view']['title']);

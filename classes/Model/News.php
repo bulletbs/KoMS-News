@@ -213,14 +213,10 @@ class Model_News extends ORM{
      */
     public function getUri(){
         if(is_null($this->_uriToMe)){
-            $categories = Model_NewsCategory::getCategoriesList();
-            $parts_uris = array_flip(Model_NewsCategory::$parts_uri);
-
             $this->_uriToMe = Route::get('news_article')->uri(array(
                 'id' => $this->id,
-                'cat_alias' => $categories[$this->category_id]->alias,
-                'part_alias' => $parts_uris[$categories[$this->category_id]->part_id],
-//                'alias' => Text::transliterate($this->name, true),
+                'cat_alias' => Model_NewsCategory::getField('alias', $this->category_id),
+                'part_alias' => Model_NewsCategory::getPartAlias( Model_NewsCategory::getField('part_id', $this->category_id) ),
                 'alias' => !empty($this->alias) ? $this->alias : Text::transliterate($this->name, true),
             ));
         }
