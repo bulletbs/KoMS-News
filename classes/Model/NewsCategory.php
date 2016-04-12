@@ -269,6 +269,7 @@ class Model_NewsCategory extends ORM{
     public static function partsUri($id = NULL){
         if(is_null(self::$parts_uri))
             self::$parts_uri = Kohana::$config->load('news')->parts_uri;
+//        echo Debug::vars(self::$parts_uri);
         if(!is_null($id))
             return isset(self::$parts_uri[$id]) ? self::$parts_uri : NULL;
         return self::$parts_uri;
@@ -282,7 +283,7 @@ class Model_NewsCategory extends ORM{
      * @return array|mixed
      */
     public static function getField($field, $id = null){
-        if(!isset(self::$fields[$field]) && NULL === ($array = Cache::instance()->get('NewsCategoryFieldArray'.ucfirst($field)))){
+        if(!isset(self::$fields[$field]) && NULL === self::$fields[$field] = Cache::instance()->get('NewsCategoryFieldArray'.ucfirst($field))){
             $array = ORM::factory('NewsCategory')->find_all()->as_array('id', $field);
             Cache::instance()->set('NewsCategoryFieldArray'.ucfirst($field), $array, self::CATEGORY_CACHE_TIME);
             self::$fields[$field] = $array;
