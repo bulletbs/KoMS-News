@@ -22,11 +22,6 @@ class Controller_News extends Controller_System_Page
 
     public function before(){
         parent::before();
-
-        $this->styles[] = "media/libs/pure-release-0.5.0/menus.css";
-//        if($this->auto_render){
-//            $this->breadcrumbs->add('Статьи', '/news', 1);
-//        }
     }
 
     /**
@@ -183,7 +178,7 @@ class Controller_News extends Controller_System_Page
             /* breadcrumbs & similar articles */
             $category = ORM::factory('NewsCategory', $article->category_id);
             if($category->loaded()){
-                $this->breadcrumbs->add(Model_NewsCategory::$parts[$category->part_id], Model_NewsCategory::getPartUri($category->part_id), 2);
+                $this->breadcrumbs->add(Model_NewsCategory::parts($category->part_id), Model_NewsCategory::getPartUri($category->part_id), 2);
                 $this->breadcrumbs->add($category->name,$category->getUri(), 3);
 
             }

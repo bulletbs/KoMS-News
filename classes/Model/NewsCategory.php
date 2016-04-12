@@ -144,7 +144,7 @@ class Model_NewsCategory extends ORM{
             $options = array();
             $categories = ORM::factory('NewsCategory')->find_all();
             foreach($categories as $category)
-                $options[Model_NewsCategory::$parts[$category->part_id]][$category->id] = $category->name;
+                $options[Model_NewsCategory::parts($category->part_id)][$category->id] = $category->name;
             Cache::instance()->set(Model_NewsCategory::CATEGORY_OPTIONS_CACHE, $options, Model_NewsCategory::CATEGORY_CACHE_TIME);
         }
         return $options;
@@ -282,13 +282,13 @@ class Model_NewsCategory extends ORM{
      * @return array|mixed
      */
     public static function getField($field, $id = null){
-        if(is_null(self::$fields) && NULL === $array = Cache::instance()->get('NewsCategoryFieldArray'.ucfirst($field))){
+        if(!isset(self::$fields[$field]) && NULL === ($array = Cache::instance()->get('NewsCategoryFieldArray'.ucfirst($field)))){
             $array = ORM::factory('NewsCategory')->find_all()->as_array('id', $field);
             Cache::instance()->set('NewsCategoryFieldArray'.ucfirst($field), $array, self::CATEGORY_CACHE_TIME);
             self::$fields[$field] = $array;
         }
         if(!is_null($id))
-            return isset(self::$fields[$field][$id]) ? self::$fields[$field][$id] : false;
-        return  self::$fields;
+            return isset(self::$fields[$field][$id]) ? self::$fields[$field][$id] : NULL;
+        return self::$fields[$field];
     }
 }
