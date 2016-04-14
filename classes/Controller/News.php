@@ -277,7 +277,7 @@ class Controller_News extends Controller_System_Page
      * HMVC action for rendering news on mainpage
      */
     public function action_main(){
-//        Cache::instance()->delete(self::MAIN_PAGE_CACHE);
+        Cache::instance()->delete(self::MAIN_PAGE_CACHE);
         if(!$content = Cache::instance()->get(self::MAIN_PAGE_CACHE)){
 
             $parts = Model_NewsCategory::$parts;
