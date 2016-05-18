@@ -274,49 +274,6 @@ class Controller_News extends Controller_System_Page
     }
 
     /**
-     * HMVC action for rendering news on mainpage
-     */
-    public function action_main(){
-        Cache::instance()->delete(self::MAIN_PAGE_CACHE);
-        if(!$content = Cache::instance()->get(self::MAIN_PAGE_CACHE)){
-
-            $parts = Model_NewsCategory::$parts;
-            $categories = Model_NewsCategory::getCategoriesList();
-
-            /* Top slider */
-            $slider =  Model_News::newsOrmFinder()->and_where('category_id','=','1')->limit(5)->find_all()->as_array('id');
-            $slide_photos = ORM::factory('NewsPhoto')->articlesPhotoList(array_keys($slider));
-
-            /* Last articles by part or category */
-            $articles = Model_News::getArticlesList( Kohana::$config->load('news.main_list') );
-
-            /* Getting all articles ids and load photos */
-            $articles_ids = array();
-            foreach($articles as $_article){
-                if(is_array($_article))
-                    foreach($_article as $_res)
-                        $articles_ids[] = $_res->id;
-                else
-                    $articles_ids[] = $_article->id;
-            }
-            $photos = ORM::factory('NewsPhoto')->articlesPhotoList($articles_ids);
-
-            $content = View::factory('news/main')
-                ->set('parts', $parts)
-                ->set('categories', $categories)
-                ->set('slider', $slider)
-                ->set('slide_photos', $slide_photos)
-                ->set('articles', $articles)
-                ->set('photos', $photos)
-                ->render()
-            ;
-            Cache::instance()->set(self::MAIN_PAGE_CACHE, $content, self::MAIN_PAGE_CACHE_TIME);
-        }
-
-        $this->response->body($content);
-    }
-
-    /**
      * Redirection to article source
      * @throws HTTP_Exception_404
      */
