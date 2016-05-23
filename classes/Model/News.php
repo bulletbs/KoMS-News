@@ -347,6 +347,9 @@ class Model_News extends ORM{
             else
                 $categories = array((int) substr($_k, 1));
             $orm->and_where('category_id', 'IN', $categories);
+            if(isset($_v['exclude'])){
+                $orm->and_where('category_id', 'NOT IN', $_v['exclude']);
+            }
             if($_v['count']>1)
                 $articles[$_k] = $orm->limit($_v['count'])->find_all()->as_array('id');
             else
